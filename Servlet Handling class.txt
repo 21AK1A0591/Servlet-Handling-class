@@ -1,0 +1,31 @@
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.IOException;
+
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        // Simplified user authentication
+        User user = authenticate(username, password);
+
+        if (user != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            response.sendRedirect(user.getRole() + "/home.jsp");
+        } else {
+            response.sendRedirect("login.jsp?error=Invalid credentials");
+        }
+    }
+
+    private User authenticate(String username, String password) {
+        // Simplified user authentication logic
+        if (username.equals("doctor") && password.equals("password")) {
+            return new Doctor(username, password, "General");
+        } else if (username.equals("patient") && password.equals("password")) {
+            return new Patient(username, password, "No medical history");
+        }
+        return null;
+    }
+}
